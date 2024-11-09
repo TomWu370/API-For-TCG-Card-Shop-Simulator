@@ -36,49 +36,6 @@ namespace API_For_TCG_Card_Shop_Simulator.Scripts
             return newCard;
         }
 
-        private static string FindDllPath()
-        {
-            string[] commonPaths = {
-        @"C:\Program Files (x86)\Steam\steamapps\common\TCG Card Shop Simulator\Card Shop Simulator_Data\Managed",
-        @"C:\Program Files\Steam\steamapps\common\TCG Card Shop Simulator\Card Shop Simulator_Data\Managed"
-    };
-
-            // Check each common path first
-            foreach (var path in commonPaths)
-            {
-                string dllPath = Path.Combine(path, "Assembly-CSharp.dll");
-                if (File.Exists(dllPath))
-                {
-                    Console.WriteLine("DLL found at: " + dllPath);
-                    return dllPath;
-                }
-            }
-
-            // If not found, proceed to full drive scan
-            foreach (string drive in Directory.GetLogicalDrives())
-            {
-                try
-                {
-                    string dllPath = Directory.GetFiles(drive, "Assembly-CSharp.dll", SearchOption.AllDirectories)
-                                              .FirstOrDefault(path => path.EndsWith(Path.Combine("Card Shop Simulator_Data", "Managed", "Assembly-CSharp.dll")));
-
-                    if (dllPath != null)
-                    {
-                        Console.WriteLine("DLL found at: " + dllPath);
-                        return dllPath;
-                    }
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    continue;
-                }
-            }
-
-            Console.WriteLine("Error: DLL path not found.");
-            return null;
-        }
-
-
         private static MonsterData CreateCard(string CardSet, string ModPrefix, string CardName, string Artist, string Description,
                                       UnityEngine.Vector3 effectAmount, EElementIndex element, EMonsterType nextEvolution,
                                       EMonsterType previousEvolution, ERarity rarity, List<string> role, Stats stats,
@@ -174,18 +131,18 @@ namespace API_For_TCG_Card_Shop_Simulator.Scripts
                            int MaxMegabot,
                            int MaxTetramonCards) GetFourSpecificCardSetsAndUpdateEnum()
             {
-                var tetramonCards = ConvertCardSetToDictList("Tetramon");
-                var fantasyRPGCards = ConvertCardSetToDictList("FantasyRPG");
-                var megabotCards = ConvertCardSetToDictList("Megabot");
-                var catJobCards = ConvertCardSetToDictList("CatJob");
+            var tetramonCards = ConvertCardSetToDictList("Tetramon");
+            var fantasyRPGCards = ConvertCardSetToDictList("FantasyRPG");
+            var megabotCards = ConvertCardSetToDictList("Megabot");
+            var catJobCards = ConvertCardSetToDictList("CatJob");
 
-                int maxCatJob = catJobCards.Count + 3040;
-                int maxMegabot = megabotCards.Count + 1113;
-                int maxFantasyRPG = fantasyRPGCards.Count + 2050;
-                int maxTetramonCards = tetramonCards.Count + 122;
+            int maxCatJob = catJobCards.Count + 3040;
+            int maxMegabot = megabotCards.Count + 1113;
+            int maxFantasyRPG = fantasyRPGCards.Count + 2050;
+            int maxTetramonCards = tetramonCards.Count + 122;
 
-                var assemblyPath = Path.Combine("path_to_assembly", "Assembly-CSharp.dll");
-                AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
+            var assemblyPath = Path.Combine("path_to_assembly", "Assembly-CSharp.dll");
+            AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
 
             Process[] processes = Process.GetProcessesByName("Card Shop Simulator");
             var cardShopSim = processes.FirstOrDefault();
