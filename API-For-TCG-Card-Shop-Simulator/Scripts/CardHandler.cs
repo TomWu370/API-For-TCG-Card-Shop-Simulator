@@ -103,44 +103,6 @@ namespace API_For_TCG_Card_Shop_Simulator.Scripts
 
         private static AssemblyDefinition GetAssemblyDefinition(string assemblyName = "Assembly-CSharp.dll")
         {
-            return cardSets.ContainsKey(CardSet) ? cardSets[CardSet] : new List<MonsterData>();
-        }
-
-        // Retrieve all CardSets
-        public static Dictionary<string, List<MonsterData>> GetAllCardSets()
-        {
-            return cardSets;
-        }
-
-        // Class to convert card data to dictionaries and handle enum updates
-        public class CardDataConverter
-        {
-            // Convert all cards in a CardSet to a list of dictionaries
-            public static List<Dictionary<string, object>> ConvertCardSetToDictList(string CardSet)
-            {
-                var cards = CardHandler.GetCardsBySet(CardSet);
-                return cards.Select(ConvertToDict).ToList();
-            }
-
-            public static (List<Dictionary<string, object>> TetramonCards,
-                           List<Dictionary<string, object>> FantasyRPGCards,
-                           List<Dictionary<string, object>> MegabotCards,
-                           List<Dictionary<string, object>> CatJobCards,
-                           int MaxCatJob,
-                           int MaxFantasyRPG,
-                           int MaxMegabot,
-                           int MaxTetramonCards) GetFourSpecificCardSetsAndUpdateEnum()
-            {
-            var tetramonCards = ConvertCardSetToDictList("Tetramon");
-            var fantasyRPGCards = ConvertCardSetToDictList("FantasyRPG");
-            var megabotCards = ConvertCardSetToDictList("Megabot");
-            var catJobCards = ConvertCardSetToDictList("CatJob");
-
-            int maxCatJob = catJobCards.Count + 3040;
-            int maxMegabot = megabotCards.Count + 1113;
-            int maxFantasyRPG = fantasyRPGCards.Count + 2050;
-            int maxTetramonCards = tetramonCards.Count + 122;
-
             var assemblyPath = Path.Combine("path_to_assembly", "Assembly-CSharp.dll");
             AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
 
@@ -173,6 +135,57 @@ namespace API_For_TCG_Card_Shop_Simulator.Scripts
             }
             return loadedAssembly;
         }
+
+        // Retrieve cards by CardSet
+        public static List<MonsterData> GetCardsBySet(string CardSet)
+        {
+            return cardSets.ContainsKey(CardSet) ? cardSets[CardSet] : new List<MonsterData>();
+        }
+
+        // Retrieve all CardSets
+        public static Dictionary<string, List<MonsterData>> GetAllCardSets()
+        {
+            return cardSets;
+        }
+
+        // Class to convert card data to dictionaries and handle enum updates
+        public class CardDataConverter
+        {
+            // Convert all cards in a CardSet to a list of dictionaries
+            public static List<Dictionary<string, object>> ConvertCardSetToDictList(string CardSet)
+            {
+                var cards = CardHandler.GetCardsBySet(CardSet);
+                return cards.Select(ConvertToDict).ToList();
+            }
+
+            public static (List<Dictionary<string, object>> TetramonCards,
+                           List<Dictionary<string, object>> FantasyRPGCards,
+                           List<Dictionary<string, object>> MegabotCards,
+                           List<Dictionary<string, object>> CatJobCards,
+                           int MaxCatJob,
+                           int MaxFantasyRPG,
+                           int MaxMegabot,
+                           int MaxTetramonCards) GetFourSpecificCardSetsAndUpdateEnum()
+            {
+                var tetramonCards = ConvertCardSetToDictList("Tetramon");
+                var fantasyRPGCards = ConvertCardSetToDictList("FantasyRPG");
+                var megabotCards = ConvertCardSetToDictList("Megabot");
+                var catJobCards = ConvertCardSetToDictList("CatJob");
+
+                int maxCatJob = catJobCards.Count + 3040;
+                int maxMegabot = megabotCards.Count + 1113;
+                int maxFantasyRPG = fantasyRPGCards.Count + 2050;
+                int maxTetramonCards = tetramonCards.Count + 122;
+
+                var assemblyPath = Path.Combine("path_to_assembly", "Assembly-CSharp.dll");
+                AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
+
+                TypeDefinition enumType = assembly.MainModule.Types.First(t => t.Name == "MonsterTypeEnum");
+
+                CustomMonsterHandler.ChangeMaxValues(enumType, maxTetramonCards, maxMegabot, maxFantasyRPG, maxCatJob);
+
+                return (tetramonCards, fantasyRPGCards, megabotCards, catJobCards, maxCatJob, maxFantasyRPG, maxMegabot, maxTetramonCards);
+            }
 
 
     }
