@@ -103,9 +103,6 @@ namespace API_For_TCG_Card_Shop_Simulator.Scripts
 
         private static AssemblyDefinition GetAssemblyDefinition(string assemblyName = "Assembly-CSharp.dll")
         {
-            var assemblyPath = Path.Combine("path_to_assembly", "Assembly-CSharp.dll");
-            AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
-
             Process[] processes = Process.GetProcessesByName("Card Shop Simulator");
             var cardShopSim = processes.FirstOrDefault();
             // Get the full path of the process executable
